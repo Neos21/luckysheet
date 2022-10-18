@@ -5100,9 +5100,9 @@ export default function luckysheetHandler() {
         luckysheetContainerFocus();
     });
 
-    //左上角返回按钮
-    $("#luckysheet_info_detail_title").click(function () {
-        window.open(luckysheetConfigsetting.myFolderUrl, "_self");
+    // 画面左上「<」アイコン
+    $('#luckysheet_info_detail_title').click(() => {
+      window.open(luckysheetConfigsetting.myFolderUrl, '_self');
     });
 
     //图表选区mousedown

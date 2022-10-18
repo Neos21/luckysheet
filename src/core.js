@@ -110,7 +110,6 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.pointEditZoom = extendsetting.pointEditZoom;
 
     luckysheetConfigsetting.userInfo = extendsetting.userInfo;
-    luckysheetConfigsetting.userMenuItem = extendsetting.userMenuItem;
     luckysheetConfigsetting.myFolderUrl = extendsetting.myFolderUrl;
     luckysheetConfigsetting.functionButton = extendsetting.functionButton;
 
