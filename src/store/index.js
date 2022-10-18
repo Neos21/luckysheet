@@ -84,7 +84,7 @@ const Store = {
     clearjfundo: true,
     jfundo: [],
     jfredo: [],
-    lang: 'en', //language
+    lang: 'ja', //language
     createChart: '',
     highlightChart: '',
     zIndex: 15,
