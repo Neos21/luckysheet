@@ -20,6 +20,7 @@
     "browser-sync": "2.27.10",
     "delete": "1.1.0",
     "esbuild": "0.11.23",
+    "eslint": "8.25.0",
     "gulp": "4.0.2",
     "gulp-clean-css": "4.3.0",
     "gulp-concat": "2.6.1",
