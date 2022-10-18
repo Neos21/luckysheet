@@ -1,35 +1,30 @@
-import { columeHeader_word, columeHeader_word_index, luckysheetdefaultFont } from '../controllers/constant';
+import { columeHeader_word, luckysheetdefaultFont } from '../controllers/constant';
 import menuButton from '../controllers/menuButton';
 import { isdatatype, isdatatypemulti } from '../global/datecontroll';
 import { hasChinaword,isRealNum } from '../global/validate';
 import Store from '../store';
 import locale from '../locale/locale';
-import numeral from 'numeral';
-// import method from '../global/method';
 
-/**
- * Common tool methods
- */
+import numeral from 'numeral';
 
 /**
  * Determine whether a string is in standard JSON format
- * @param {String} str 
+ * 
+ * @param {string} str
  */
 function isJsonString(str) {
-    try {
-        if (typeof JSON.parse(str) == "object") {
-            return true;
-        }
-    }
-    catch (e) { }
-    return false;
+  try {
+    if(typeof JSON.parse(str) == 'object') return true;
+  }
+  catch(e) { /* Do Nothing */ }
+  return false;
 }
-
 
 /**
  * extend two objects
- * @param {Object } jsonbject1
- * @param {Object } jsonbject2 
+ * 
+ * @param {object} jsonbject1
+ * @param {object} jsonbject2
  */
 function common_extend(jsonbject1, jsonbject2) {
     let resultJsonObject = {};
@@ -777,146 +772,124 @@ function transformRangeToAbsolute(txt1){
     return ret.substr(0, ret.length-1); 
 }
 
-function openSelfModel(id, isshowMask=true){
-    let $t = $("#"+id)
-            .find(".luckysheet-modal-dialog-content")
-            .css("min-width", 300)
-            .end(), 
-        myh = $t.outerHeight(), 
-        myw = $t.outerWidth();
-    let winw = $(window).width(), winh = $(window).height();
-    let scrollLeft = $(document).scrollLeft(), scrollTop = $(document).scrollTop();
-    $t.css({ 
-    "left": (winw + scrollLeft - myw) / 2, 
-    "top": (winh + scrollTop - myh) / 3 
-    }).show();
-
-    if(isshowMask){
-        $("#luckysheet-modal-dialog-mask").show();
-    }
+function openSelfModel(id, isshowMask = true) {
+  /* eslint-disable no-undef */
+  const $t = $('#' + id)
+    .find('.luckysheet-modal-dialog-content')
+    .css('min-width', 300)
+    .end();
+  const myh = $t.outerHeight();
+  const myw = $t.outerWidth();
+  const winw = $(window).width();
+  const winh = $(window).height();
+  const scrollLeft = $(document).scrollLeft();
+  const scrollTop  = $(document).scrollTop();
+  $t.css({
+    left: (winw + scrollLeft - myw) / 2,
+    top : (winh + scrollTop  - myh) / 3
+  }).show();
+  if(isshowMask) $('#luckysheet-modal-dialog-mask').show();
+  /* eslint-enable */
 }
 
-/**
- * 监控对象变更
- * @param {*} data 
- */
-// const createProxy = (data,list=[]) => {
-//     if (typeof data === 'object' && data.toString() === '[object Object]') {
-//       for (let k in data) {
-//         if(list.includes(k)){
-//             if (typeof data[k] === 'object') {
-//               defineObjectReactive(data, k, data[k])
-//             } else {
-//               defineBasicReactive(data, k, data[k])
-//             }
-//         }
-//       }
-//     }
-// }
 
 const createProxy = (data, k, callback) => {
-    if(!data.hasOwnProperty(k)){ 
-        console.info('No %s in data',k);
-        return; 
-    };
-
-    if (getObjType(data) === 'object') {
-        if (getObjType(data[k]) === 'object' || getObjType(data[k]) === 'array') {
-            defineObjectReactive(data, k, data[k], callback)
-        } else {
-            defineBasicReactive(data, k, data[k], callback)
-        }
+  if(!Object.prototype.hasOwnProperty.call(data, k)) {  // TODO
+    console.info('No %s in data', k);
+    return;
+  }
+  
+  if(getObjType(data) === 'object') {
+    if(getObjType(data[k]) === 'object' || getObjType(data[k]) === 'array') {
+      defineObjectReactive(data, k, data[k], callback);
     }
-}
-  
-function defineObjectReactive(obj, key, value, callback) {
-    // 递归
-    obj[key] = new Proxy(value, {
-      set(target, property, val, receiver) {
-        
-          setTimeout(() => {
-            callback(target, property, val, receiver);
-          }, 0);
+    else {
+      defineBasicReactive(data, k, data[k], callback);
+    }
+  }
+};
 
-        return Reflect.set(target, property, val, receiver)
-      }
-    })
+function defineObjectReactive(obj, key, value, callback) {  // 递归
+  obj[key] = new Proxy(value, {
+    set(target, property, val, receiver) {
+      setTimeout(() => {
+        callback(target, property, val, receiver);
+      }, 0);
+      return Reflect.set(target, property, val, receiver);
+    }
+  });
 }
-  
+
 function defineBasicReactive(obj, key, value, callback) {
-    Object.defineProperty(obj, key, {
-      enumerable: true,
-      configurable: false,
-      get() {
-        return value
-      },
-      set(newValue) {
-        if (value === newValue) return
-        console.log(`发现 ${key} 属性 ${value} -> ${newValue}`)
-
-        setTimeout(() => {
-            callback(value,newValue);
-        }, 0);
-
-        value = newValue
-
-      }
-    })
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: false,
+    get() {
+      return value;
+    },
+    set(newValue) {
+      if(value === newValue) return;
+      console.log(`发现 ${key} 属性 ${value} -> ${newValue}`);
+      setTimeout(() => {
+        callback(value, newValue);
+      }, 0);
+      value = newValue;
+    }
+  });
 }
 
 /**
  * Remove an item in the specified array
- * @param {array} array Target array 
+ * 
+ * @param {array} array Target array
  * @param {string} item What needs to be removed
  */
 function arrayRemoveItem(array, item) {
-    array.some((curr, index, arr)=>{
-        if(curr === item){
-            arr.splice(index, 1);
-            return curr === item;
-        }
-    })
+  array.some((curr, index, arr) => {
+    if(curr === item) {
+      arr.splice(index, 1);
+      return curr === item;
+    }
+  });
 }
 
 /**
  * camel 形式的单词转换为 - 形式 如 fillColor -> fill-color
+ * 
  * @param {string} camel camel 形式
- * @returns
  */
- function camel2split(camel) {
-    return camel.replace(/([A-Z])/g, function(all, group) {
-        return '-' + group.toLowerCase();
-    });
+function camel2split(camel) {
+  return camel.replace(/([A-Z])/g, (_, group) => '-' + group.toLowerCase());
 }
-  
+
 export {
-    isJsonString,
-    common_extend,
-    replaceHtml,
-    getObjType,
-    getNowDateTime,
-    hexToRgb,
-    rgbTohex,
-    ABCatNum,
-    chatatABC,
-    ceateABC,
-    createABCdim,
-    getByteLen,
-    ArrayUnique,
-    luckysheetfontformat,
-    showrightclickmenu,
-    luckysheetactiveCell,
-    numFormat,
-    numfloatlen,
-    mouseclickposition,
-    $$,
-    seriesLoadScripts,
-    parallelLoadScripts,
-    loadLinks,
-    luckysheetContainerFocus,
-    transformRangeToAbsolute,
-    openSelfModel,
-    createProxy,
-    arrayRemoveItem,
-    camel2split
-}
+  isJsonString,
+  common_extend,
+  replaceHtml,
+  getObjType,
+  getNowDateTime,
+  hexToRgb,
+  rgbTohex,
+  ABCatNum,
+  chatatABC,
+  ceateABC,
+  createABCdim,
+  getByteLen,
+  ArrayUnique,
+  luckysheetfontformat,
+  showrightclickmenu,
+  luckysheetactiveCell,
+  numFormat,
+  numfloatlen,
+  mouseclickposition,
+  $$,
+  seriesLoadScripts,
+  parallelLoadScripts,
+  loadLinks,
+  luckysheetContainerFocus,
+  transformRangeToAbsolute,
+  openSelfModel,
+  createProxy,
+  arrayRemoveItem,
+  camel2split
+};

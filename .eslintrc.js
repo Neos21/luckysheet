@@ -16,7 +16,9 @@ module.exports = {
     'block-spacing': 'error',  // ブレースの前後のスペース
     'brace-style': ['error', 'stroustrup'],  // `else` や `catch` の手前の終了ブレース `}` で改行する
     'comma-dangle': ['error', 'never'],  // 末尾カンマを禁止
-    'no-trailing-spaces': ['error', { skipBlankLines: true }],  // 空行以外の末尾スペースなし
+    'no-trailing-spaces': ['error', { skipBlankLines: true, ignoreComments: true }],  // 空行以外の末尾スペースなし
+    'no-unused-vars': 'error',  // 未使用の変数
+    'no-var': 'error',
     quotes: ['error', 'single'],  // シングルクォート必須
     semi: ['error', 'always'],  // 末尾セミコロンを必須
     'semi-spacing': 'error',  // セミコロンの手前はスペースなし
