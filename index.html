@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="./dist/plugins/css/pluginsCss.css">
+    <link rel="stylesheet" href="./dist/plugins/plugins.css">
+    <link rel="stylesheet" href="./dist/css/luckysheet.css">
+    <link rel="stylesheet" href="./dist/assets/iconfont/iconfont.css">
+    <script                 src="./dist/plugins/js/plugin.js"></script>  <!-- Includes jQuery : [FAQ | Luckysheet Document](https://dream-num.github.io/LuckysheetDocs/guide/FAQ.html#does-the-project-use-jquery) -->
+    <script                 src="./dist/luckysheet.umd.js"></script>
+    <style>
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#sheet {
+  position: absolute;
+  width : 100%;
+  height: 100%;
+  top : 0;
+  left: 0;
+}
+
+    </style>
+    <script type="module">
+
+window.luckysheet.create({
+  container: 'sheet',  // Element ID
+  // - [Overall configuration | Luckysheet Document](https://dream-num.github.io/LuckysheetDocs/guide/config.html#loadurl)
+  //   - `loadUrl` (カレントシート)、`loadSheetUrl` (他シート)
+  //   - `allowUpdate` (バックエンド更新許可)、`updateUrl` (更新)
+  title: 'Book',
+  data: [
+    // - [Sheet Configuration | Luckysheet Document](https://dream-num.github.io/LuckysheetDocs/guide/sheet.html#initial)
+    { name: 'Sheet' }  // 初期データ : 1シートだけにする
+  ],
+  column: 15,
+  row   : 50
+});
+
+    </script>
+  </head>
+  <body>
+
+<div id="sheet"></div>
+
+  </body>
+</html>
