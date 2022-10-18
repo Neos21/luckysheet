@@ -39,7 +39,21 @@ window.luckysheet.create({
   //  { name: 'Sheet' }  // 初期データ : 1シートだけにする
   //],
   column: 15,
-  row   : 50
+  row   : 50,
+  cellRightClickConfig: {
+    customs: [
+      {
+        title: '書き出し',
+        onClick: (clickEvent, event, params) => {
+          // `toJson()` : `create()` メソッドの引数として与えられる全量・`data` プロパティ内は現状の内容
+          // `getAllSheets()` : `create()` の `data` プロパティとして与えられる全シートのデータ
+          // `m` は必ず文字列 (見えてるとおり)、`v` は数値や Boolean の型が考慮されている
+          // 改行を入れたセルの場合は `ct.s[0].v` に改行コード `\r\n` 込みで格納される (`m` や `v` がない)
+          console.log('書き出し', clickEvent, event, params, luckysheet.toJson(), luckysheet.getAllSheets());
+        }
+      }
+    ]
+  }
 });
 
     </script>
