@@ -5,7 +5,6 @@ import { locales } from './locale/locale';
 import server                        from './controllers/server';
 import luckysheetConfigsetting       from './controllers/luckysheetConfigsetting';
 import sheetmanage                   from './controllers/sheetmanage';
-//import luckysheetsizeauto from './controllers/resize';  // TODO : 未使用だけど？
 import luckysheetHandler             from './controllers/handler';
 import { initialFilterHandler      } from './controllers/filter';
 import { initialMatrixOperation    } from './controllers/matrixOperation';
@@ -28,7 +27,6 @@ import method from './global/method';
 
 import * as api from './global/api';
 
-//import flatpickr from 'flatpickr';  // TODO : 未使用になった
 import { initListener             } from './controllers/listener';
 import { hideloading, showloading } from './global/loading.js';
 import { luckysheetextendData     } from './global/extend.js';
