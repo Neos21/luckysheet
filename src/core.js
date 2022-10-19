@@ -131,7 +131,7 @@ luckysheet.create = (setting) => {
   const devicePixelRatio = extendsetting.devicePixelRatio ?? 1;
   Store.devicePixelRatio = Math.ceil(devicePixelRatio);
   
-  //loading
+  // loading
   const loadingObj = luckysheetlodingHTML('#' + container);
   Store.loadingObj = loadingObj;
 
