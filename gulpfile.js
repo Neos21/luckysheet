@@ -24,7 +24,6 @@ const paths = {
   staticFonts        : ['src/fonts/**'],
   staticAssets       : ['src/assets/**'],
   staticImages       : ['src/plugins/images/*.png'],
-  staticExpendPlugins: ['src/expendPlugins/**', '!src/expendPlugins/**/plugin.js'],
   staticCssImages    : ['src/css/**'          , '!src/css/*.css'],
   
   // static resources dest
@@ -32,11 +31,10 @@ const paths = {
   destStaticFonts        : ['dist/fonts'],
   destStaticAssets       : ['dist/assets'],
   destStaticImages       : ['dist/plugins/images'],
-  destStaticExpendPlugins: ['dist/expendPlugins'],
   destStaticCssImages    : ['dist/css'],
   
   // core es module
-  core: ['src/**/*.js', 'src/expendPlugins/**/plugin.js', '!src/plugins/js/*.js'],
+  core: ['src/**/*.js', '!src/plugins/js/*.js'],
   
   // plugins src
   pluginsCss: ['src/plugins/css/*.css'],
@@ -101,7 +99,6 @@ function watcher(done) {
   watch(paths.staticFonts        , { delay: 500 }, series(copyStaticFonts        , reloadBrowser));
   watch(paths.staticAssets       , { delay: 500 }, series(copyStaticAssets       , reloadBrowser));
   watch(paths.staticImages       , { delay: 500 }, series(copyStaticImages       , reloadBrowser));
-  watch(paths.staticExpendPlugins, { delay: 500 }, series(copyStaticExpendPlugins, reloadBrowser));
   watch(paths.staticCssImages    , { delay: 500 }, series(copyStaticCssImages    , reloadBrowser));
   done();
 }
@@ -160,11 +157,10 @@ function copyStaticHtml()          { return src(paths.staticHtml         ).pipe(
 function copyStaticFonts()         { return src(paths.staticFonts        ).pipe(dest(paths.destStaticFonts        )); }
 function copyStaticAssets()        { return src(paths.staticAssets       ).pipe(dest(paths.destStaticAssets       )); }
 function copyStaticImages()        { return src(paths.staticImages       ).pipe(dest(paths.destStaticImages       )); }
-function copyStaticExpendPlugins() { return src(paths.staticExpendPlugins).pipe(dest(paths.destStaticExpendPlugins)); }
 function copyStaticCssImages()     { return src(paths.staticCssImages    ).pipe(dest(paths.destStaticCssImages    )); }
 
-const dev   = series(clean, parallel(pluginsCss, plugins, css, pluginsJs, copyStaticHtml, copyStaticFonts, copyStaticAssets, copyStaticImages, copyStaticExpendPlugins, copyStaticCssImages, core), watcher, serve);
-const build = series(clean, parallel(pluginsCss, plugins, css, pluginsJs, copyStaticHtml, copyStaticFonts, copyStaticAssets, copyStaticImages, copyStaticExpendPlugins, copyStaticCssImages, core));
+const dev   = series(clean, parallel(pluginsCss, plugins, css, pluginsJs, copyStaticHtml, copyStaticFonts, copyStaticAssets, copyStaticImages, copyStaticCssImages, core), watcher, serve);
+const build = series(clean, parallel(pluginsCss, plugins, css, pluginsJs, copyStaticHtml, copyStaticFonts, copyStaticAssets, copyStaticImages, copyStaticCssImages, core));
 
 exports.dev     = dev;
 exports.build   = build;
