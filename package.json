@@ -1,11 +1,25 @@
 {
   "name": "@neos21/luckysheet",
-  "version": "2.1.13",
+  "private": true,
   "browser": "dist/luckysheet.umd.js",
   "files"  : ["dist"],
   "scripts": {
     "dev"  : "NODE_ENV=development gulp dev",
     "build": "NODE_ENV=production  gulp build"
+  },
+  "author": "Neo <neos21@gmail.com> (https://neos21.net/)",
+  "license": "MIT",
+  "homepage": "https://github.com/Neos21/luckysheet#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neos21/luckysheet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Neos21/luckysheet/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Neos21"
   },
   "dependencies": {
     "dayjs": "1.11.5",
