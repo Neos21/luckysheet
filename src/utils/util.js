@@ -1,384 +1,259 @@
-import { columeHeader_word, columeHeader_word_index, luckysheetdefaultFont } from '../controllers/constant';
+import { columeHeader_word, luckysheetdefaultFont } from '../controllers/constant';
 import menuButton from '../controllers/menuButton';
 import { isdatatype, isdatatypemulti } from '../global/datecontroll';
 import { hasChinaword,isRealNum } from '../global/validate';
 import Store from '../store';
 import locale from '../locale/locale';
-import numeral from 'numeral';
-// import method from '../global/method';
 
-/**
- * Common tool methods
- */
+import numeral from 'numeral';
 
 /**
  * Determine whether a string is in standard JSON format
- * @param {String} str 
+ * 
+ * @param {string} str
  */
 function isJsonString(str) {
-    try {
-        if (typeof JSON.parse(str) == "object") {
-            return true;
-        }
-    }
-    catch (e) { }
-    return false;
+  try {
+    if(typeof JSON.parse(str) == 'object') return true;
+  }
+  catch(e) { /* Do Nothing */ }
+  return false;
 }
-
 
 /**
  * extend two objects
- * @param {Object } jsonbject1
- * @param {Object } jsonbject2 
+ * 
+ * @param {object} jsonbject1
+ * @param {object} jsonbject2
  */
 function common_extend(jsonbject1, jsonbject2) {
-    let resultJsonObject = {};
+  const resultJsonObject = {};
+  for(let attr in jsonbject1) resultJsonObject[attr] = jsonbject1[attr];
+  for(let attr in jsonbject2) {
+    if(jsonbject2[attr] == undefined) continue;  // undefined is equivalent to no setting
+    resultJsonObject[attr] = jsonbject2[attr];
+  }
+  return resultJsonObject;
+}
 
-    for (let attr in jsonbject1) {
-        resultJsonObject[attr] = jsonbject1[attr];
-    }
-
-    for (let attr in jsonbject2) {
-        // undefined is equivalent to no setting
-        if(jsonbject2[attr] == undefined){
-            continue;
-        }
-        resultJsonObject[attr] = jsonbject2[attr];
-    }
-
-    return resultJsonObject;
-};
-
-// 替换temp中的${xxx}为指定内容 ,temp:字符串，这里指html代码，dataarry：一个对象{"xxx":"替换的内容"}
-// 例：luckysheet.replaceHtml("${image}",{"image":"abc","jskdjslf":"abc"})   ==>  abc
+/**
+ * 替换temp中的${xxx}为指定内容 ,temp:字符串，这里指html代码，dataarry：一个对象{"xxx":"替换的内容"}
+ * 
+ * 例：luckysheet.replaceHtml("${image}",{"image":"abc","jskdjslf":"abc"})   ==>  abc
+ */
 function replaceHtml(temp, dataarry) {
-    return temp.replace(/\$\{([\w]+)\}/g, function (s1, s2) { let s = dataarry[s2]; if (typeof (s) != "undefined") { return s; } else { return s1; } });
-};
+  return temp.replace(/\$\{([\w]+)\}/g, (s1, s2) => {
+    const s = dataarry[s2];
+    return typeof s !== 'undefined' ? s : s1;
+  });
+}
 
-//获取数据类型
+/** 获取数据类型 */
 function getObjType(obj) {
-    let toString = Object.prototype.toString;
-
-    let map = {
-        '[object Boolean]': 'boolean',
-        '[object Number]': 'number',
-        '[object String]': 'string',
-        '[object Function]': 'function',
-        '[object Array]': 'array',
-        '[object Date]': 'date',
-        '[object RegExp]': 'regExp',
-        '[object Undefined]': 'undefined',
-        '[object Null]': 'null',
-        '[object Object]': 'object'
-    }
-
-    // if(obj instanceof Element){
-    //     return 'element';
-    // }
-
-    return map[toString.call(obj)];
+  let toString = Object.prototype.toString;
+  let map = {
+    '[object Boolean]'  : 'boolean',
+    '[object Number]'   : 'number',
+    '[object String]'   : 'string',
+    '[object Function]' : 'function',
+    '[object Array]'    : 'array',
+    '[object Date]'     : 'date',
+    '[object RegExp]'   : 'regExp',
+    '[object Undefined]': 'undefined',
+    '[object Null]'     : 'null',
+    '[object Object]'   : 'object'
+  };
+  return map[toString.call(obj)];
 }
 
-//获取当前日期时间
+/** 获取当前日期时间 */
 function getNowDateTime(format) {
-    let now = new Date();
-    let year = now.getFullYear();  //得到年份
-    let month = now.getMonth();  //得到月份
-    let date = now.getDate();  //得到日期
-    let day = now.getDay();  //得到周几
-    let hour = now.getHours();  //得到小时
-    let minu = now.getMinutes();  //得到分钟
-    let sec = now.getSeconds();  //得到秒
-
-    month = month + 1;
-    if (month < 10) month = "0" + month;
-    if (date < 10) date = "0" + date;
-    if (hour < 10) hour = "0" + hour;
-    if (minu < 10) minu = "0" + minu;
-    if (sec < 10) sec = "0" + sec;
-
-    let time = '';
-
-    //日期
-    if(format == 1) {
-        time = year + "-" + month + "-" + date;
-    }
-    //日期时间
-    else if(format == 2) {
-        time = year + "-" + month + "-" + date+ " " + hour + ":" + minu + ":" + sec;
-    }
-
-    return time;
+  const now  = new Date();
+  const year = now.getFullYear();  // 得到年份
+  let month  = now.getMonth();     // 得到月份
+  let date   = now.getDate();      // 得到日期
+  let hour   = now.getHours();     // 得到小时
+  let minu   = now.getMinutes();   // 得到分钟
+  let sec    = now.getSeconds();   // 得到秒
+  
+  month = month + 1;
+  if(month < 10) month = '0' + month;
+  if(date  < 10) date  = '0' + date;
+  if(hour  < 10) hour  = '0' + hour;
+  if(minu  < 10) minu  = '0' + minu;
+  if(sec   < 10) sec   = '0' + sec;
+  
+  let time = '';
+  
+  if(format == 1) {  //日期
+    time = year + '-' + month + '-' + date;
+  }
+  else if(format == 2) {  //日期时间
+    time = year + '-' + month + '-' + date + ' ' + hour + ':' + minu + ':' + sec;
+  }
+  return time;
 }
 
-//颜色 16进制转rgb
+/** 颜色 16进制转rgb */
 function hexToRgb(hex) {
-    let color = [], rgb = [];
-    hex = hex.replace(/#/, "");
+  hex = hex.replace(/#/, '');
+  const color = [];
+  const rgb   = [];
+  
+  if(hex.length == 3) {  // 处理 "#abc" 成 "#aabbcc"
+    const tmp = [];
+    for(let i = 0; i < 3; i++) tmp.push(hex.charAt(i) + hex.charAt(i));
+    hex = tmp.join("");
+  }
+  
+  for(let i = 0; i < 3; i++) {
+    color[i] = '0x' + hex.substr(i + 2, 2);
+    rgb.push(parseInt(Number(color[i])));
+  }
+  
+  return 'rgb(' + rgb.join(',') + ')';
+}
 
-    if (hex.length == 3) { // 处理 "#abc" 成 "#aabbcc"
-        let tmp = [];
-
-        for (let i = 0; i < 3; i++) {
-            tmp.push(hex.charAt(i) + hex.charAt(i));
-        }
-
-        hex = tmp.join("");
-    }
-
-    for (let i = 0; i < 3; i++) {
-        color[i] = "0x" + hex.substr(i + 2, 2);
-        rgb.push(parseInt(Number(color[i])));
-    }
-
-    return 'rgb(' + rgb.join(",") + ')';
-};
-
-//颜色 rgb转16进制
+/** 颜色 rgb转16进制 */
 function rgbTohex(color) {
-    let rgb;
+  let rgb;
+  if(color.indexOf('rgba') > -1) {
+    rgb = color.replace('rgba(', '').replace(')', '').split(',');
+  }
+  else {
+    rgb = color.replace('rgb(', '').replace(')', '').split(',');
+  }
+  
+  const r = parseInt(rgb[0]);
+  const g = parseInt(rgb[1]);
+  const b = parseInt(rgb[2]);
+  const hex = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  return hex;
+}
 
-    if (color.indexOf("rgba") > -1) {
-        rgb = color.replace("rgba(", "").replace(")", "").split(',');
-    }
-    else {
-        rgb = color.replace("rgb(", "").replace(")", "").split(',');
-    }
-
-    let r = parseInt(rgb[0]);
-    let g = parseInt(rgb[1]);
-    let b = parseInt(rgb[2]);
-
-    let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-
-    return hex;
-};
-
-//列下标  字母转数字
+/** 列下标  字母转数字 */
 function ABCatNum(a) {
-    // abc = abc.toUpperCase();
+  if(a == null || a.length == 0) return NaN;
+  
+  const str = a.toLowerCase().split('');
+  const al = str.length;
+  const getCharNumber = (charx) => charx.charCodeAt() - 96;
+  let numout = 0;
+  for(let i = 0; i < al; i++) {
+    const charnum = getCharNumber(str[i]);
+    numout += charnum * Math.pow(26, al - i - 1);
+  }
+  
+  if(numout == 0) return NaN;
+  return numout - 1;
+}
 
-    // let abc_len = abc.length;
-    // if (abc_len == 0) {
-    //     return NaN;
-    // }
-
-    // let abc_array = abc.split("");
-    // let wordlen = columeHeader_word.length;
-    // let ret = 0;
-
-    // for (let i = abc_len - 1; i >= 0; i--) {
-    //     if (i == abc_len - 1) {
-    //         ret += columeHeader_word_index[abc_array[i]];
-    //     }
-    //     else {
-    //         ret += Math.pow(wordlen, abc_len - i - 1) * (columeHeader_word_index[abc_array[i]] + 1);
-    //     }
-    // }
-
-    // return ret;
-    if(a==null || a.length==0){
-        return NaN;
-    }
-    var str=a.toLowerCase().split("");
-    var num=0;
-    var al = str.length;
-    var getCharNumber = function(charx){
-        return charx.charCodeAt() -96;
-    };
-    var numout = 0;
-    var charnum = 0;
-    for(var i = 0; i < al; i++){
-        charnum = getCharNumber(str[i]);
-        numout += charnum * Math.pow(26, al-i-1);
-    };
-    // console.log(a, numout-1);
-    if(numout==0){
-        return NaN;
-    }
-    return numout-1;
-};
-
-//列下标  数字转字母
+/** 下标  数字转字母 */
 function chatatABC(n) {
-    // let wordlen = columeHeader_word.length;
-
-    // if (index < wordlen) {
-    //     return columeHeader_word[index];
-    // }
-    // else {
-    //     let last = 0, pre = 0, ret = "";
-    //     let i = 1, n = 0;
-
-    //     while (index >= (wordlen / (wordlen - 1)) * (Math.pow(wordlen, i++) - 1)) {
-    //         n = i;
-    //     }
-
-    //     let index_ab = index - (wordlen / (wordlen - 1)) * (Math.pow(wordlen, n - 1) - 1);//970
-    //     last = index_ab + 1;
-
-    //     for (let x = n; x > 0; x--) {
-    //         let last1 = last, x1 = x;//-702=268, 3
-
-    //         if (x == 1) {
-    //             last1 = last1 % wordlen;
-
-    //             if (last1 == 0) {
-    //                 last1 = 26;
-    //             }
-
-    //             return ret + columeHeader_word[last1 - 1];
-    //         }
-
-    //         last1 = Math.ceil(last1 / Math.pow(wordlen, x - 1));
-    //         //last1 = last1 % wordlen;
-    //         ret += columeHeader_word[last1 - 1];
-
-    //         if (x > 1) {
-    //             last = last - (last1 - 1) * wordlen;
-    //         }
-    //     }
-    // }
-
-    var orda = 'a'.charCodeAt(0); 
-   
-    var ordz = 'z'.charCodeAt(0); 
-   
-    var len = ordz - orda + 1; 
-   
-    var s = ""; 
-   
-    while( n >= 0 ) { 
-   
-        s = String.fromCharCode(n % len + orda) + s; 
-   
-        n = Math.floor(n / len) - 1; 
-   
-    } 
-   
-    return s.toUpperCase(); 
-};
+  const orda = 'a'.charCodeAt(0);
+  const ordz = 'z'.charCodeAt(0);
+  const len = ordz - orda + 1;
+  let s = '';
+  while(n >= 0) {
+    s = String.fromCharCode(n % len + orda) + s;
+    n = Math.floor(n / len) - 1;
+  }
+  return s.toUpperCase();
+}
 
 function ceateABC(index) {
-    let wordlen = columeHeader_word.length;
-
-    if (index < wordlen) {
-        return columeHeader_word;
+  const wordlen = columeHeader_word.length;
+  if(index < wordlen) return columeHeader_word;
+  
+  let i = 2;
+  let n = 0;
+  while(index < (wordlen / (wordlen - 1)) * (Math.pow(wordlen, i) - 1)) {
+    n = i;
+    i++;
+  }
+  
+  let relist = [];
+  for(let x = 0; x < n; x++) {
+    if(x == 0) {
+      relist = relist.concat(columeHeader_word);
     }
     else {
-        let relist = [];
-        let i = 2, n = 0;
-
-        while (index < (wordlen / (wordlen - 1)) * (Math.pow(wordlen, i) - 1)) {
-            n = i;
-            i++;
-        }
-
-        for (let x = 0; x < n; x++) {
-
-            if (x == 0) {
-                relist = relist.concat(columeHeader_word);
-            }
-            else {
-                relist = relist.concat(createABCdim(x), index);
-            }
-        }
+      relist = relist.concat(createABCdim(x), index);
     }
-};
+  }
+}
 
-function createABCdim(x, count) {
-    let chwl = columeHeader_word.length;
-
-    if (x == 1) {
-        let ret = [];
-        let c = 0, con = true;
-
-        for (let i = 0; i < chwl; i++) {
-            let b = columeHeader_word[i];
-
-            for (let n = 0; n < chwl; n++) {
-                let bq = b + columeHeader_word[n];
-                ret.push(bq);
-                c++;
-
-                if (c > index) {
-                    return ret;
-                }
-            }
-        }
+function createABCdim(x, index) {  // TODO : 元の引数名は index ではなく count だった
+  const chwl = columeHeader_word.length;
+  if(x == 1) {
+    const ret = [];
+    let c     = 0;
+    for(let i = 0; i < chwl; i++) {
+      const b = columeHeader_word[i];
+      for(let n = 0; n < chwl; n++) {
+        const bq = b + columeHeader_word[n];
+        ret.push(bq);
+        c++;
+        if(c > index) return ret;
+      }
     }
-    else if (x == 2) {
-        let ret = [];
-        let c = 0, con = true;
-
-        for (let i = 0; i < chwl; i++) {
-            let bb = columeHeader_word[i];
-
-            for (let w = 0; w < chwl; w++) {
-                let aa = columeHeader_word[w];
-
-                for (let n = 0; n < chwl; n++) {
-                    let bqa = bb + aa + columeHeader_word[n];
-                    ret.push(bqa);
-                    c++;
-
-                    if (c > index) {
-                        return ret;
-                    }
-                }
-            }
+  }
+  else if(x == 2) {
+    const ret = [];
+    let c     = 0;
+    for(let i = 0; i < chwl; i++) {
+      const bb = columeHeader_word[i];
+      for(let w = 0; w < chwl; w++) {
+        const aa = columeHeader_word[w];
+        for(let n = 0; n < chwl; n++) {
+          const bqa = bb + aa + columeHeader_word[n];
+          ret.push(bqa);
+          c++;
+          if(c > index) return ret;
         }
+      }
     }
-};
+  }
+}
 
 /**
  * 计算字符串字节长度
+ * 
  * @param {*} val 字符串
  * @param {*} subLen 要截取的字符串长度
  */
-function getByteLen(val,subLen) {
-    if(subLen === 0){
-        return "";
+function getByteLen(val, subLen) {
+  if(subLen === 0) return '';
+  if(val == null) return 0;
+  
+  let len = 0;
+  for(let i = 0; i < val.length; i++) {
+    let a = val.charAt(i);
+    if(a.match(/[^\x00-\xff]/ig) != null) {  // eslint-disable-line no-control-regex
+      len += 2;
     }
-
-    if (val == null) {
-        return 0;
+    else {
+      len += 1;
     }
+    if(isRealNum(subLen) && len === ~~subLen) return val.substring(0, i);
+  }
+  return len;
+}
 
-    let len = 0;
-    for (let i = 0; i < val.length; i++) {
-        let a = val.charAt(i);
-
-        if (a.match(/[^\x00-\xff]/ig) != null) {
-            len += 2;
-        }
-        else {
-            len += 1;
-        }
-
-        if(isRealNum(subLen) && len === ~~subLen){
-            return val.substring(0,i)
-        }
-
-    }
-
-    return len;
-};
-
-//数组去重
+/** 数组去重 */
 function ArrayUnique(dataArr) {
-    let result = [];
-    let obj = {};
-    if (dataArr.length > 0) {
-        for (let i = 0; i < dataArr.length; i++) {
-            let item = dataArr[i];
-            if (!obj[item]) {
-                result.push(item);
-                obj[item] = 1;
-            }
-        }
+  const result = [];
+  const obj    = {};
+  if(dataArr.length > 0) {
+    for(let i = 0; i < dataArr.length; i++) {
+      const item = dataArr[i];
+      if(!obj[item]) {
+        result.push(item);
+        obj[item] = 1;
+      }
     }
-    return result
+  }
+  return result;
 }
 
 //获取字体配置
@@ -488,21 +363,12 @@ function luckysheetactiveCell() {
     }
 }
 
-//单元格编辑聚焦
+/** 单元格编辑聚焦 */
 function luckysheetContainerFocus() {
-    
-    // $("#" + Store.container).focus({ 
-    //     preventScroll: true 
-    // });
-    
-    // fix jquery error: Uncaught TypeError: ((n.event.special[g.origType] || {}).handle || g.handler).apply is not a function
-    // $("#" + Store.container).attr("tabindex", 0).focus();
-
-    // need preventScroll:true,fix Luckysheet has been set top, and clicking the cell will trigger the scrolling problem
-    document.getElementById(Store.container).focus({preventScroll:true});
+  document.getElementById(Store.container).focus({ preventScroll: true });
 }
 
-//数字格式
+/** 数字格式 */
 function numFormat(num, type) {
     if (num == null || isNaN(parseFloat(num)) || hasChinaword(num) || num == -Infinity || num == Infinity) {
         return null;
@@ -697,226 +563,190 @@ function parallelLoadScripts(scripts, options, callback) {
 }
 
 /**
-* 动态添加css
-* @param {String}  url 指定要加载的css地址
-*/
+ * 动态添加css
+ * 
+ * @param {string} url 指定要加载的css地址
+ */
 function loadLink(url) {
-    var doc = document;
-    var link = doc.createElement("link");
-    link.setAttribute("rel", "stylesheet");
-    link.setAttribute("type", "text/css");
-    link.setAttribute("href", url);
+  const doc  = document;
+  const link = doc.createElement('link');
+  link.setAttribute('rel' , 'stylesheet');
+  link.setAttribute('type', 'text/css');
+  link.setAttribute('href', url);
+  const heads = doc.getElementsByTagName('head');
+  if(heads.length) {
+    heads[0].appendChild(link);
+  }
+  else {
+    doc.documentElement.appendChild(link);
+  }
+}
 
-    var heads = doc.getElementsByTagName("head");
-    if (heads.length) {
-        heads[0].appendChild(link);
+/**
+ * 动态添加一组css
+ * 
+ * @param {string} urls 指定要加载的css地址
+ */
+function loadLinks(urls) {
+  if(typeof urls !== 'object') urls = [urls];
+  urls.forEach(url => {
+    loadLink(url);
+  });
+}
+
+function transformRangeToAbsolute(txt1) {
+  if(txt1 == null || txt1.length === 0) return null;
+  
+  const txtArray = txt1.split(',');
+  let ret = '';
+  for(let i = 0; i < txtArray.length; i++) {
+    const txt      = txtArray[i];
+    const txtSplit = txt.split('!');
+    let sheetName  = '';
+    let rangeTxt   = '';
+    
+    if(txtSplit.length > 1) {
+      sheetName = txtSplit[0];
+      rangeTxt  = txtSplit[1];
     }
     else {
-        doc.documentElement.appendChild(link);
+      rangeTxt = txtSplit[0];
     }
+    
+    const rangeTxtArray = rangeTxt.split(':');
+    let rangeRet = '';
+    for(let a = 0; a < rangeTxtArray.length; a++) {
+      const t   = rangeTxtArray[a];
+      const row = t.replace(/[^0-9]/g, '');
+      const col = t.replace(/[^A-Za-z]/g, '');
+      let rangeTT = '';
+      if(col != '') rangeTT += '$' + col;
+      if(row != '') rangeTT += '$' + row;
+      rangeRet += rangeTT + ':';
+    }
+    rangeRet = rangeRet.substr(0, rangeRet.length - 1);
+    ret += sheetName + rangeRet + ',';
+  }
+  return ret.substr(0, ret.length - 1);
 }
 
-/**
-* 动态添加一组css
-* @param {String}  url 指定要加载的css地址
-*/
-function loadLinks(urls) {
-    if (typeof (urls) !== 'object') {
-        urls = [urls];
-    }
-    if (urls.length) {
-        urls.forEach(url => {
-            loadLink(url);
-        });
-    }
+function openSelfModel(id, isshowMask = true) {
+  /* eslint-disable no-undef */
+  const $t = $('#' + id)
+    .find('.luckysheet-modal-dialog-content')
+    .css('min-width', 300)
+    .end();
+  const myh = $t.outerHeight();
+  const myw = $t.outerWidth();
+  const winw = $(window).width();
+  const winh = $(window).height();
+  const scrollLeft = $(document).scrollLeft();
+  const scrollTop  = $(document).scrollTop();
+  $t.css({
+    left: (winw + scrollLeft - myw) / 2,
+    top : (winh + scrollTop  - myh) / 3
+  }).show();
+  if(isshowMask) $('#luckysheet-modal-dialog-mask').show();
+  /* eslint-enable */
 }
-
-function transformRangeToAbsolute(txt1){
-    if(txt1 ==null ||txt1.length==0){
-        return null;
-    }
-
-    let txtArray = txt1.split(",");
-    let ret = "";
-    for(let i=0;i<txtArray.length;i++){
-        let txt = txtArray[i];
-        let txtSplit = txt.split("!"), sheetName="", rangeTxt="";
-        if(txtSplit.length>1){
-            sheetName = txtSplit[0];
-            rangeTxt = txtSplit[1];
-        }
-        else{
-            rangeTxt = txtSplit[0];
-        }
-
-        let rangeTxtArray = rangeTxt.split(":");
-
-        let rangeRet = "";
-        for(let a=0;a<rangeTxtArray.length;a++){
-            let t = rangeTxtArray[a];
-
-            let row = t.replace(/[^0-9]/g, "");
-            let col = t.replace(/[^A-Za-z]/g, "");
-            let rangeTT = ""
-            if(col!=""){
-                rangeTT += "$" + col;
-            }
-
-            if(row!=""){
-                rangeTT += "$" + row;
-            }
-
-            rangeRet+=rangeTT+":";
-        }
-
-        rangeRet = rangeRet.substr(0, rangeRet.length-1);
-
-        ret += sheetName + rangeRet + ",";
-    }
-
-    return ret.substr(0, ret.length-1); 
-}
-
-function openSelfModel(id, isshowMask=true){
-    let $t = $("#"+id)
-            .find(".luckysheet-modal-dialog-content")
-            .css("min-width", 300)
-            .end(), 
-        myh = $t.outerHeight(), 
-        myw = $t.outerWidth();
-    let winw = $(window).width(), winh = $(window).height();
-    let scrollLeft = $(document).scrollLeft(), scrollTop = $(document).scrollTop();
-    $t.css({ 
-    "left": (winw + scrollLeft - myw) / 2, 
-    "top": (winh + scrollTop - myh) / 3 
-    }).show();
-
-    if(isshowMask){
-        $("#luckysheet-modal-dialog-mask").show();
-    }
-}
-
-/**
- * 监控对象变更
- * @param {*} data 
- */
-// const createProxy = (data,list=[]) => {
-//     if (typeof data === 'object' && data.toString() === '[object Object]') {
-//       for (let k in data) {
-//         if(list.includes(k)){
-//             if (typeof data[k] === 'object') {
-//               defineObjectReactive(data, k, data[k])
-//             } else {
-//               defineBasicReactive(data, k, data[k])
-//             }
-//         }
-//       }
-//     }
-// }
 
 const createProxy = (data, k, callback) => {
-    if(!data.hasOwnProperty(k)){ 
-        console.info('No %s in data',k);
-        return; 
-    };
-
-    if (getObjType(data) === 'object') {
-        if (getObjType(data[k]) === 'object' || getObjType(data[k]) === 'array') {
-            defineObjectReactive(data, k, data[k], callback)
-        } else {
-            defineBasicReactive(data, k, data[k], callback)
-        }
+  if(!Object.prototype.hasOwnProperty.call(data, k)) {
+    console.info('No %s in data', k);
+    return;
+  }
+  
+  if(getObjType(data) === 'object') {
+    if(getObjType(data[k]) === 'object' || getObjType(data[k]) === 'array') {
+      defineObjectReactive(data, k, data[k], callback);
     }
-}
-  
-function defineObjectReactive(obj, key, value, callback) {
-    // 递归
-    obj[key] = new Proxy(value, {
-      set(target, property, val, receiver) {
-        
-          setTimeout(() => {
-            callback(target, property, val, receiver);
-          }, 0);
+    else {
+      defineBasicReactive(data, k, data[k], callback);
+    }
+  }
+};
 
-        return Reflect.set(target, property, val, receiver)
-      }
-    })
+function defineObjectReactive(obj, key, value, callback) {  // 递归
+  obj[key] = new Proxy(value, {
+    set(target, property, val, receiver) {
+      setTimeout(() => {
+        callback(target, property, val, receiver);
+      }, 0);
+      return Reflect.set(target, property, val, receiver);
+    }
+  });
 }
-  
+
 function defineBasicReactive(obj, key, value, callback) {
-    Object.defineProperty(obj, key, {
-      enumerable: true,
-      configurable: false,
-      get() {
-        return value
-      },
-      set(newValue) {
-        if (value === newValue) return
-        console.log(`发现 ${key} 属性 ${value} -> ${newValue}`)
-
-        setTimeout(() => {
-            callback(value,newValue);
-        }, 0);
-
-        value = newValue
-
-      }
-    })
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: false,
+    get() {
+      return value;
+    },
+    set(newValue) {
+      if(value === newValue) return;
+      console.log(`发现 ${key} 属性 ${value} -> ${newValue}`);
+      setTimeout(() => {
+        callback(value, newValue);
+      }, 0);
+      value = newValue;
+    }
+  });
 }
 
 /**
  * Remove an item in the specified array
- * @param {array} array Target array 
+ * 
+ * @param {array} array Target array
  * @param {string} item What needs to be removed
  */
 function arrayRemoveItem(array, item) {
-    array.some((curr, index, arr)=>{
-        if(curr === item){
-            arr.splice(index, 1);
-            return curr === item;
-        }
-    })
+  array.some((curr, index, arr) => {
+    if(curr === item) {
+      arr.splice(index, 1);
+      return curr === item;
+    }
+  });
 }
 
 /**
  * camel 形式的单词转换为 - 形式 如 fillColor -> fill-color
+ * 
  * @param {string} camel camel 形式
- * @returns
  */
- function camel2split(camel) {
-    return camel.replace(/([A-Z])/g, function(all, group) {
-        return '-' + group.toLowerCase();
-    });
+function camel2split(camel) {
+  return camel.replace(/([A-Z])/g, (_, group) => '-' + group.toLowerCase());
 }
-  
+
 export {
-    isJsonString,
-    common_extend,
-    replaceHtml,
-    getObjType,
-    getNowDateTime,
-    hexToRgb,
-    rgbTohex,
-    ABCatNum,
-    chatatABC,
-    ceateABC,
-    createABCdim,
-    getByteLen,
-    ArrayUnique,
-    luckysheetfontformat,
-    showrightclickmenu,
-    luckysheetactiveCell,
-    numFormat,
-    numfloatlen,
-    mouseclickposition,
-    $$,
-    seriesLoadScripts,
-    parallelLoadScripts,
-    loadLinks,
-    luckysheetContainerFocus,
-    transformRangeToAbsolute,
-    openSelfModel,
-    createProxy,
-    arrayRemoveItem,
-    camel2split
-}
+  isJsonString,
+  common_extend,
+  replaceHtml,
+  getObjType,
+  getNowDateTime,
+  hexToRgb,
+  rgbTohex,
+  ABCatNum,
+  chatatABC,
+  ceateABC,
+  createABCdim,
+  getByteLen,
+  ArrayUnique,
+  luckysheetfontformat,
+  showrightclickmenu,
+  luckysheetactiveCell,
+  numFormat,
+  numfloatlen,
+  mouseclickposition,
+  $$,
+  seriesLoadScripts,
+  parallelLoadScripts,
+  loadLinks,
+  luckysheetContainerFocus,
+  transformRangeToAbsolute,
+  openSelfModel,
+  createProxy,
+  arrayRemoveItem,
+  camel2split
+};

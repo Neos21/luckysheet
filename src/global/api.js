@@ -6679,21 +6679,6 @@ export function toJson(){
 
 
 /**
- * 传入目标语言，切换到对应的语言界面
- * @param {String} lang 可选参数；暂支持`"zh"`、`"en"`、`"es"`；默认为`"zh"`；
- */
-export function changLang(lang = 'zh'){
-    if(!['zh', 'en', 'es'].includes(lang)){
-        return tooltip.info("The lang parameter is invalid.", "");
-    }
-
-    let options = toJson();
-    options.lang = lang;
-    luckysheet.create(options);
-}
-
-
-/**
  * 关闭websocket连接
  */
 export function closeWebsocket(){
